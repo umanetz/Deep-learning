@@ -15,8 +15,8 @@ def _parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--datadir', default='/data/kaggle-freesound-2019')
     parser.add_argument('--outpath', default='/data/runs/')
-    parser.add_argument('--epochs', default=10)
-    parser.add_argument('--batch_size', default=32)
+    parser.add_argument('--epochs', default=10, type=int)
+    parser.add_argument('--batch_size', default=32, type=int)
     return parser.parse_args()
 
 
@@ -47,20 +47,30 @@ def main(args):
     trainloader = DataLoader(trainds, batch_size=args.batch_size, shuffle=True, num_workers=8, pin_memory=True)
     evalloader = DataLoader(evalds, batch_size=args.batch_size, shuffle=False, num_workers=16, pin_memory=True)
 
+    export_path = os.path.join(experiment_path, 'last.pth')
+
+    best_lwlrap = 0
+
     for epoch in range(args.epochs):
         trainer.train_epoch(model, opt, trainloader, 3e-4)
         metrics = trainer.eval_epoch(model, evalloader)
 
-        state = dict(
-            epoch=epoch,
-            model_state_dict=model.state_dict(),
-            optimizer_state_dict=opt.state_dict(),
-            loss=metrics['loss'],
-            lwlrap=metrics['lwlrap'],
-            global_step=trainer.global_step,
-        )
-        export_path = os.path.join(experiment_path, 'last.pth')
-        torch.save(state, export_path)
+        print('Epoch: {} - lwlrap: {:.4f}'.format(epoch, metrics['lwlrap']))
+
+        if metrics['lwlrap'] > best_lwlrap:
+            best_lwlrap = metrics['lwlrap']
+            torch.save(model.state_dict(), export_path)
+
+        # state = dict(
+        #     epoch=epoch,
+        #     model_state_dict=model.state_dict(),
+        #     optimizer_state_dict=opt.state_dict(),
+        #     loss=metrics['loss'],
+        #     lwlrap=metrics['lwlrap'],
+        #     global_step=trainer.global_step,
+        # )
+
+    print('Best metrics {:.4f}'.format(best_lwlrap))
 
 
 if __name__ == "__main__":
