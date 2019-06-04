@@ -159,7 +159,7 @@ def resnet34(**kwargs):
 device = torch.device("cuda")
 ckpt = torch.load(model_path)
 model = resnet34()
-model.load_state_dict(ckpt)
+model.load_state_dict(ckpt['model_state_dict'])
 model.to(device)
 model.eval()
 

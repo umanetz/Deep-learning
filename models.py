@@ -103,8 +103,7 @@ class SingleChannelResnet(nn.Module):
             probs=probs,
         )
 
-#1
 
 def resnet34(**kwargs):
-    model = SingleChannelResnet(BasicBlock, [2, 3, 4, 2], **kwargs)
+    model = SingleChannelResnet(BasicBlock, [3, 4, 6, 3], **kwargs)
     return model

@@ -104,4 +104,3 @@ class lwlrap_accumulator(object):
     def overall_lwlrap(self):
         """Return the scalar overall lwlrap for cumulated samples."""
         return np.sum(self.per_class_lwlrap() * self.per_class_weight())
-#1

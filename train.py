@@ -5,31 +5,10 @@ from torch.nn import functional as F
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 import numpy as np
-from torch import nn
-from torch.autograd import Variable
 
 import utils
 
 plt.switch_backend('agg')
-
-def mixup_data(x, y, alpha=1.0, use_cuda=False):
-    if alpha > 0:
-        lam = np.random.beta(alpha, alpha)
-    else:
-        lam = 1
-
-    batch_size = x.size()[0]
-    if use_cuda:
-        index = torch.randperm(batch_size).cuda()
-    else:
-        index = torch.randperm(batch_size)
-
-    mixed_x = lam * x + (1 - lam) * x[index, :]
-    y_a, y_b = y, y[index]
-    return mixed_x, y_a, y_b, lam
-
-def mixup_criterion(criterion, pred, y_a, y_b, lam):
-    return lam * criterion(pred, y_a) + (1 - lam) * criterion(pred, y_b)
 
 
 def apply_wd(model, gamma):
@@ -62,35 +41,22 @@ class Trainer:
         self.train_writer = train_writer
         self.eval_writer = eval_writer
         self.compute_grads = compute_grads
-        self.alpha = 0.7
 
     def train_epoch(self, model, optimizer, dataloader, lr, log_prefix=""):
         device = self.device
 
         model = model.to(device)
         model.train()
-        criterion = nn.BCEWithLogitsLoss()
-
-        # for param_group in optimizer.param_groups:
-        #     param_group['lr'] = lr
+        for param_group in optimizer.param_groups:
+            param_group['lr'] = lr
 
         for batch in tqdm(dataloader):
             x = batch['logmel'].to(device)
             y = batch['labels'].to(device)
 
-            inputs, targets_a, targets_b, lam = mixup_data(x, y, self.alpha)
-            inputs, targets_a, targets_b = map(Variable, (inputs, targets_a, targets_b))
-
             optimizer.zero_grad()
-            out = model(inputs)
-
-            # out_ravel = out.view(-1,)
-            # y_ravel = y.view(-1,)
-            # loss = (criterion(out, y) +
-            #         criterion(out_ravel, y_ravel)) / 2
-
-            loss = mixup_criterion(criterion, out, targets_a, targets_b, lam)
-
+            out = model(x)
+            loss = F.binary_cross_entropy_with_logits(out, y)
             loss.backward()
             optimizer.step()
 
@@ -117,7 +83,6 @@ class Trainer:
         else:
             device = torch.device('cpu')
 
-        criterion = nn.BCEWithLogitsLoss()
         model = model.to(device)
         model.eval()
         metrics = defaultdict(list)
@@ -126,19 +91,8 @@ class Trainer:
             with torch.no_grad():
                 x = batch['logmel'].to(device)
                 y = batch['labels'].to(device)
-
-                inputs, targets_a, targets_b, lam = mixup_data(x, y, self.alpha)
-                inputs, targets_a, targets_b = map(Variable, (inputs, targets_a, targets_b))
-
-                out = model(inputs)
-
-                # out_ravel = out.view(-1, )
-                # y_ravel = y.view(-1, )
-                # loss = (criterion(out, y) +
-                #         criterion(out_ravel, y_ravel)) / 2
-
-                loss = mixup_criterion(criterion, out, targets_a, targets_b, lam)
-
+                out = model(x)
+                loss = F.binary_cross_entropy_with_logits(out, y)
                 probs = torch.sigmoid(out).cpu().data.numpy()
                 lrap = label_ranking_average_precision_score(batch['labels'], probs)
                 lwlrap.accumulate_samples(batch['labels'], probs)
@@ -148,7 +102,6 @@ class Trainer:
 
         metrics = {key: np.mean(values) for key, values in metrics.items()}
         metrics['lwlrap'] = lwlrap.overall_lwlrap()
-
         for name, value in metrics.items():
             if log_prefix != '':
                 name = log_prefix + '/' + name

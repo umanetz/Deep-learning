@@ -1,0 +1,13 @@
+{
+  "kernel_type": "script", 
+  "dataset_sources": ["umanets/last_model"], 
+  "competition_sources": ["freesound-audio-tagging-2019"], 
+  "id": "umanets/my-awesome-kernel22", 
+  "is_private": "true", 
+  "enable_internet": "false", 
+  "code_file": "kernel_infer.py", 
+  "language": "python", 
+  "title": "My Awesome Kernel2", 
+  "kernel_sources": [], 
+  "enable_gpu": "false"
+}
