@@ -2,4 +2,5 @@
 
 Для начала воспроизведем безлайн (10 эпох, bs=32)
 
-![lrap](./img/lrap.png =250x)
+<img src="./img/lrap.png" alt="drawing" width="200"/>
+
