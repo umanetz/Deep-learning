@@ -5,10 +5,31 @@ from torch.nn import functional as F
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 import numpy as np
+from torch.autograd import Variable
 
 import utils
 
 plt.switch_backend('agg')
+
+def mixup_data(x, y, alpha=1.0, use_cuda=True):
+    if alpha > 0:
+        lam = np.random.beta(alpha, alpha)
+    else:
+        lam = 1
+
+    batch_size = x.size()[0]
+    if use_cuda:
+        index = torch.randperm(batch_size).cuda()
+    else:
+        index = torch.randperm(batch_size)
+
+    mixed_x = lam * x + (1 - lam) * x[index, :]
+    y_a, y_b = y, y[index]
+    return mixed_x, y_a, y_b, lam
+
+
+def mixup_loss(criterion, pred, y_a, y_b, lam):
+    return lam * criterion(pred, y_a) + (1 - lam) * criterion(pred, y_b)
 
 
 def apply_wd(model, gamma):
@@ -42,7 +63,7 @@ class Trainer:
         self.eval_writer = eval_writer
         self.compute_grads = compute_grads
 
-    def train_epoch(self, model, optimizer, dataloader, lr, log_prefix=""):
+    def train_epoch(self, model, optimizer, dataloader, lr, log_prefix="", mixup=True):
         device = self.device
 
         model = model.to(device)
@@ -54,9 +75,18 @@ class Trainer:
             x = batch['logmel'].to(device)
             y = batch['labels'].to(device)
 
-            optimizer.zero_grad()
-            out = model(x)
-            loss = F.binary_cross_entropy_with_logits(out, y)
+            if mixup:
+                inputs, y_a, y_b, lam = mixup_data(x, y, 0.4)
+                inputs, y_a, y_b = map(Variable, (inputs, y_a, y_b))
+                optimizer.zero_grad()
+                out = model(inputs)
+                loss = mixup_loss(F.binary_cross_entropy_with_logits, out, y_a, y_b, lam)
+
+            else:
+                optimizer.zero_grad()
+                out = model(x)
+                loss = F.binary_cross_entropy_with_logits(out, y)
+
             loss.backward()
             optimizer.step()
 
