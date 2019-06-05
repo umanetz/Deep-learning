@@ -1,6 +1,7 @@
 ## Проект по DL и LSML
 
-Для начала воспроизведем безлайн (10 эпох, bs=32)
+Для начала воспроизведем безлайн 
+{epochs: 10, bs: 32, lr: 1e-4}
 
 <img src="./img/lrap.png" alt="drawing" width="350"/> <img src="./img/loss.png" alt="drawing" width="350"/>
 
