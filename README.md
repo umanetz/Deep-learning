@@ -1,4 +1,5 @@
-## Проект по DL и LSML
+## Проект по DL и LSML 
+*Freesound Audio Tagging 2019*
 
 Для начала воспроизведем безлайн 
 {epochs: 10, bs: 32, lr: 1e-4}
