@@ -4,8 +4,6 @@ import os
 from tensorboardX import SummaryWriter
 import torch
 from torch.utils.data import DataLoader
-from torch.optim.lr_scheduler import CosineAnnealingLR, StepLR
-import matplotlib.pyplot as plt
 
 import data
 import models
@@ -13,24 +11,25 @@ import train
 import utils
 import math
 
-
+#python main.py --outpath './runs' --epochs 60 --batch_size 64
 def _parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--datadir', default='/data/kaggle-freesound-2019')
     parser.add_argument('--outpath', default='./runs')
-    parser.add_argument('--epochs', default=40, type=int)
-    parser.add_argument('--batch_size', default=64, type=int)
+    parser.add_argument('--epochs', default=10, type=int)
+    parser.add_argument('--batch_size', default=32, type=int)
     return parser.parse_args()
 
 
 def cyclical_lr(half_period, min_lr=3e-2, max_lr=3e-3):
-    scaler = lambda x: 2 / x
+    half_period = float(half_period)
+    scaler = lambda x: 2. / x
     lr_lambda = lambda it: min_lr + (max_lr - min_lr) * relative(it, half_period)
 
     def relative(it, half_period):
-        cycle = math.floor(1 + it / (2 * half_period))
-        x = abs(it / half_period - 2 * cycle + 1)
-        return max(0, (1 - x)) * scaler(cycle)
+        cycle = math.floor(1. + it / (2. * half_period))
+        x = abs(it / half_period - 2. * cycle + 1.)
+        return max(0, (1. - x)) * scaler(cycle)
     return lr_lambda
 
 def main(args):
@@ -46,7 +45,6 @@ def main(args):
     val_writer = SummaryWriter(os.path.join(experiment_path, 'val_logs'))
     trainer = train.Trainer(train_writer, val_writer)
 
-    # todo: add config
     train_transform = data.build_preprocessing()
     eval_transform = data.build_preprocessing()
 
@@ -65,15 +63,16 @@ def main(args):
 
     best_lwlrap = 0
 
-    scheduler = cyclical_lr(5, 1e-4, 1e-2)
+    scheduler = cyclical_lr(5, 1e-4, 2e-2)
 
     for epoch in range(args.epochs):
-        print('lr {}'.format(scheduler(epoch)))
+        print('Epoch {} - lr {:.6f}'.format(epoch, scheduler(epoch)))
         trainer.train_epoch(model, opt, trainloader, scheduler(epoch))
         metrics = trainer.eval_epoch(model, evalloader)
 
         print('Epoch: {} - lwlrap: {:.4f}'.format(epoch, metrics['lwlrap']))
 
+        # save best model
         if metrics['lwlrap'] > best_lwlrap:
             best_lwlrap = metrics['lwlrap']
             torch.save(model.state_dict(), export_path)
