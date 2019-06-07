@@ -7,6 +7,15 @@
 
 <img src="./img/lrap.png" alt="drawing" width="350"/> <img src="./img/loss.png" alt="drawing" width="350"/>
 
-Очевидно, что модель недообучилась. Увеличим число эпох
+Очевидно, что модель недообучилась. 
+
+Следущем эксперементе увеличили число эпох, зделали cycle lr и применили алгоритм mixup 
+
+######  epochs=96, bs=64, lr=cycle
+
+<img src="./img/cycle_lr.png" alt="drawing" width="350"/>
+<img src="./img/lrap_mixup.png" alt="drawing" width="350"/> <img src="./img/loss_mixup.png" alt="drawing" width="350"/>
+
+
 
 
