@@ -13,7 +13,7 @@
 
 
 
-<img src="./img/loss_lrap_base.png" alt="drawing" width="350"/>
+<img src="./img/loss_lrap_base.png" alt="drawing" width="650"/>
 
 Далее будем сохранять лучшую модель.
 - В следущем эксперементе увеличили число эпох, сделали cycle lr и применили алгоритм mixup 
