@@ -25,7 +25,10 @@
 
 <img src="./img/loss_lrap_mixup.png" alt="drawing" width="500"/> 
 
-Примерно с 30 эпохи начинается переобучение. Также видна зависимость от циклов lr.
+На валидации качество подросло. Это видно на картинке ниже:
+
+<img src="./img/mixup_vs_base.png" alt="drawing" width="500"/> 
+
 
 
 
