@@ -21,7 +21,7 @@
 Далее будем сохранять лучшую модель.
 - В следущем эксперементе увеличили число эпох, сделали cycle lr и применили алгоритм mixup 
 
-######  epochs=96, bs=64, lr=cycle
+######  epochs=40, bs=32, lr=cycle
 
 <img src="./img/lr_scheduler.png" alt="drawing" width="500"/>
 
@@ -37,7 +37,8 @@
 
 <img src="./img/per_class_lwlrap_mixup.png" alt="drawing" width="500"/>
 
-Низкое значение у классов {11: Buzz, 29: Electric_guitar, 35: Frying_(food), 56: Run, 63: Slam, 77: Writing, 79: Zipper_(clothing)}
+Низкое значение у классов {11: Buzz,
+29: Electric_guitar, 35: Frying_(food), 56: Run, 63: Slam, 77: Writing, 79: Zipper_(clothing)}
 
 
 
