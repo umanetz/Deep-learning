@@ -37,8 +37,7 @@
 
 <img src="./img/per_class_lwlrap_mixup.png" alt="drawing" width="500"/>
 
-
-
+Низкое значение у классов {11: Buzz, 29: Electric_guitar, 35: Frying_(food), 56: Run, 63: Slam, 77: Writing, 79: Zipper_(clothing)}
 
 
 
