@@ -23,7 +23,7 @@
 <img src="./img/lr_scheduler.png" alt="drawing" width="350"/>
 
 
-<img src="./img/lrap_mixup.png" alt="drawing" width="350"/>  <img src="./img/loss_mixup.png" alt="drawing" width="350"/>
+<img src="./img/loss_lrap_mixup.png" alt="drawing" width="350"/> 
 
 Примерно с 30 эпохи начинается переобучение. Также видна зависимость от циклов lr.
 
