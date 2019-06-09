@@ -17,7 +17,6 @@
 
 <img src="./img/per_class_lwlrap_base.png" alt="drawing" width="500"/>
 
-Из графика видно, что плохо предсказываются классы 
 
 Далее будем сохранять лучшую модель.
 - В следущем эксперементе увеличили число эпох, сделали cycle lr и применили алгоритм mixup 
@@ -33,7 +32,7 @@
 
 <img src="./img/mixup_vs_base.png" alt="drawing" width="500"/>
 
-Также подросло значение per_class_lwlrap для плохо предсказываемых классов у бейзлайна. 
+Также подросло значение per_class_lwlrap для многих классов по сравнению с бейзлайном. 
 
 
 <img src="./img/per_class_lwlrap_mixup.png" alt="drawing" width="500"/>
