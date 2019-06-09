@@ -20,7 +20,7 @@
 
 ######  epochs=96, bs=64, lr=cycle
 
-<img src="./img/lr_scheduler.png" alt="drawing" width="350"/>
+<img src="./img/lr_scheduler.png" alt="drawing" width="500"/>
 
 
 <img src="./img/loss_lrap_mixup.png" alt="drawing" width="500"/> 
