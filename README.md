@@ -48,7 +48,25 @@ $11: Buzz
 
 77: Writing 
 
-79: Zipper_(clothing)$
+79: Zipper_(clothing)
+
+Построим per_class_lwlrap отдельно для каждого типа данных: 
+
+<img src="./img/per_class_lwlrap_mixup.png" alt="drawing" width="500"/>
+
+Видно, что curated моделируется лучше, чем noisy.
+
+Например, для класса Zipper_(clothing) в noisy части много файлоы не относящихся к этому звуку:
+
+Zipper_(clothing)
+028cd525.wav, e05b61e6.wav, d3e4a81e.wav - разговор
+2e043da5.wav,397074a3.wav - машина
+087a2f52.wav - стук
+
+Поэтому, такое плохое качество на noisy данных. 
+
+
+
 
 
 
