@@ -16,14 +16,14 @@ def _parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--datadir', default='/data/kaggle-freesound-2019')
     parser.add_argument('--outpath', default='./runs')
-    parser.add_argument('--epochs', default=10, type=int)
+    parser.add_argument('--epochs', default=40, type=int)
     parser.add_argument('--batch_size', default=32, type=int)
     return parser.parse_args()
 
 
 def cyclical_lr(half_period, min_lr=3e-2, max_lr=3e-3):
     half_period = float(half_period)
-    scaler = lambda x: 2. / x
+    scaler = lambda x: 3. / x
     lr_lambda = lambda it: min_lr + (max_lr - min_lr) * relative(it, half_period)
 
     def relative(it, half_period):
@@ -43,7 +43,8 @@ def main(args):
     print(experiment_path)
     train_writer = SummaryWriter(os.path.join(experiment_path, 'train_logs'))
     val_writer = SummaryWriter(os.path.join(experiment_path, 'val_logs'))
-    trainer = train.Trainer(train_writer, val_writer)
+    scheduler = cyclical_lr(5, 1e-5, 2e-3)
+    trainer = train.Trainer(train_writer, val_writer, scheduler=scheduler)
 
     train_transform = data.build_preprocessing()
     eval_transform = data.build_preprocessing()
@@ -56,14 +57,12 @@ def main(args):
     opt = torch.optim.Adam(model.parameters())
 
     trainloader = DataLoader(trainds, batch_size=args.batch_size, shuffle=True, num_workers=8, pin_memory=True)
-    evalloader = DataLoader(evalds, batch_size=args.batch_size, shuffle=True, num_workers=16, pin_memory=True)
+    evalloader = DataLoader(evalds, batch_size=args.batch_size, shuffle=False, num_workers=16, pin_memory=True)
 
 
     export_path = os.path.join(experiment_path, 'last.pth')
 
     best_lwlrap = 0
-
-    scheduler = cyclical_lr(5, 1e-4, 2e-2)
 
     for epoch in range(args.epochs):
         print('Epoch {} - lr {:.6f}'.format(epoch, scheduler(epoch)))

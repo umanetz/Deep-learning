@@ -48,11 +48,10 @@ def grad_norm(model):
             count += 1
     return grad.cpu().numpy() / count
 
-
 class Trainer:
     global_step = 0
 
-    def __init__(self, train_writer=None, eval_writer=None, compute_grads=True, device=None):
+    def __init__(self, train_writer=None, eval_writer=None, compute_grads=True, device=None, scheduler=None):
         if device is None:
             if torch.cuda.is_available():
                 device = torch.device('cuda')
@@ -62,16 +61,22 @@ class Trainer:
         self.train_writer = train_writer
         self.eval_writer = eval_writer
         self.compute_grads = compute_grads
+        if scheduler is not None:
+            self.scheduler = scheduler
 
     def train_epoch(self, model, optimizer, dataloader, lr, log_prefix="", mixup=True):
         device = self.device
 
         model = model.to(device)
         model.train()
+
         for param_group in optimizer.param_groups:
             param_group['lr'] = lr
 
         for batch in tqdm(dataloader):
+            #print(self.scheduler(self.global_step))
+
+
             x = batch['logmel'].to(device)
             y = batch['labels'].to(device)
 
@@ -81,6 +86,7 @@ class Trainer:
                 optimizer.zero_grad()
                 out = model(inputs)
                 loss = mixup_loss(F.binary_cross_entropy_with_logits, out, y_a, y_b, lam)
+
 
             else:
                 optimizer.zero_grad()
@@ -117,6 +123,7 @@ class Trainer:
         model.eval()
         metrics = defaultdict(list)
         lwlrap = utils.lwlrap_accumulator()
+
         for batch in tqdm(dataloader):
             with torch.no_grad():
                 x = batch['logmel'].to(device)
@@ -127,8 +134,8 @@ class Trainer:
                 lrap = label_ranking_average_precision_score(batch['labels'], probs)
                 lwlrap.accumulate_samples(batch['labels'], probs)
 
-                metrics['loss'].append(loss.item())
                 metrics['lrap'].append(lrap)
+                metrics['loss'].append(loss.item())
 
         metrics = {key: np.mean(values) for key, values in metrics.items()}
         metrics['lwlrap'] = lwlrap.overall_lwlrap()

@@ -49,13 +49,15 @@ class KFSDataset(Dataset):
 
 
 def load_data(dataroot, kind=None):
-    assert kind in {'train_curated', 'train_noisy'}
+    #assert kind in {'train_curated', 'train_noisy'}
+    mapping = {'train_noisy_clear':'train_noisy', 'train_curated':'train_curated'}
+    assert kind in {'train_noisy_clear', 'train_curated'}
     csv_path = os.path.join(dataroot, kind + '.csv')
     df = pd.read_csv(csv_path, sep=',')
     data = []
     print('loading data')
     for fname, s in tqdm(zip(df[u'fname'].values, df[u'labels'].values)):
-        path = os.path.join(dataroot, kind, fname)
+        path = os.path.join(dataroot, mapping[kind], fname)
         labels = [label2id[k] for k in s.split(',')]
         data.append((path, labels))
     return data
@@ -63,7 +65,8 @@ def load_data(dataroot, kind=None):
 
 def build_dataset(dataroot, transform):
     whole_data = []
-    for ds in ['train_noisy', 'train_curated']:
+    #for ds in ['train_noisy', 'train_curated']:
+    for ds in ['train_noisy_clear', 'train_curated']:
         whole_data += load_data(dataroot, kind=ds)
     idx = np.arange(len(whole_data))
 
@@ -74,6 +77,14 @@ def build_dataset(dataroot, transform):
     trainds = KFSDataset([whole_data[_] for _ in train_idx], transform)
     evalds = KFSDataset([whole_data[_] for _ in val_idx], transform)
     return trainds, evalds
+
+
+def myPad(x):
+    samples = 44100*2
+    padding = samples - len(x)    # add padding at both ends
+    offset = padding // 2
+    y = np.pad(x, (offset, samples - len(x) - offset),'constant')
+    return y
 
 
 def build_preprocessing(ref_len=661500, batch_size=32, low_db=-10.0, high_db=120.0, mean_db=1.0, std_db=2.5):
