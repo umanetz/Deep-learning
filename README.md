@@ -11,9 +11,13 @@
 
 При увеличении эпох до 40 loss улетает
 
-
-
 <img src="./img/loss_lrap_base.png" alt="drawing" width="500"/>
+
+Посмотрим на распределение lelrap по классам:
+
+<img src="./img/per_class_lwlrap_base.png" alt="drawing" width="500"/>
+
+Из графика видно, что плохо предсказываются классы 
 
 Далее будем сохранять лучшую модель.
 - В следущем эксперементе увеличили число эпох, сделали cycle lr и применили алгоритм mixup 
@@ -27,7 +31,14 @@
 
 На валидации качество подросло. Это видно на картинке ниже:
 
-<img src="./img/mixup_vs_base.png" alt="drawing" width="500"/> 
+<img src="./img/mixup_vs_base.png" alt="drawing" width="500"/>
+
+Также подросло значение per_class_lwlrap для плохо предсказываемых классов у бейзлайна. 
+
+
+<img src="./img/per_class_lwlrap_mixup.png" alt="drawing" width="500"/>
+
+
 
 
 
