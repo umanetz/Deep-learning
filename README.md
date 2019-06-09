@@ -52,18 +52,25 @@ $11: Buzz
 
 Построим per_class_lwlrap отдельно для каждого типа данных: 
 
-<img src="./img/per_class_lwlrap_mixup.png" alt="drawing" width="500"/>
+<img src="./img/per_class_lwlrap_mixup_div.png" alt="drawing" width="500"/>
 
 Видно, что curated моделируется лучше, чем noisy.
 
-Например, для класса Zipper_(clothing) в noisy части много файлоы не относящихся к этому звуку:
+Например, для класса Zipper_(clothing) в noisy части много файлов, не относящихся к этому звуку:
 
 Zipper_(clothing)
+
 028cd525.wav, e05b61e6.wav, d3e4a81e.wav - разговор
+
 2e043da5.wav,397074a3.wav - машина
+
 087a2f52.wav - стук
 
-Поэтому, такое плохое качество на noisy данных. 
+Поэтому, такое плохое качество на noisy данных в этом классе. 
+
+
+
+
 
 
 
