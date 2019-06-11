@@ -4,6 +4,7 @@ import os
 from tensorboardX import SummaryWriter
 import torch
 from torch.utils.data import DataLoader
+from torchcontrib.optim import SWA
 
 import data
 import models
@@ -54,7 +55,8 @@ def main(args):
     evalds.transform = eval_transform
 
     model = models.resnet34()
-    opt = torch.optim.Adam(model.parameters())
+    base_opt = torch.optim.Adam(model.parameters())
+    opt = SWA(base_opt, swa_start=30, swa_freq=10)
 
     trainloader = DataLoader(trainds, batch_size=args.batch_size, shuffle=True, num_workers=8, pin_memory=True)
     evalloader = DataLoader(evalds, batch_size=args.batch_size, shuffle=False, num_workers=16, pin_memory=True)
@@ -77,7 +79,7 @@ def main(args):
             torch.save(model.state_dict(), export_path)
 
     print('Best metrics {:.4f}'.format(best_lwlrap))
-
+    opt.swap_swa_sgd()
 
 if __name__ == "__main__":
     args = _parse_args()
