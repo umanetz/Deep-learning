@@ -32,14 +32,14 @@
 
 <img src="./img/mixup_vs_base.png" alt="drawing" width="500"/>
 
-- Применение SWA начиная с 30 эпохи не улучшает рузультат
+- Применение SWA, начиная с 30 эпохи, не улучшает рузультат
 
 <img src="./img/mixup_vs_SWA.png" alt="drawing" width="500"/>
 
 
 - Посмотрим на метрику на разных классах.
 
- 1. Подросло значение per_class_lwlrap для многих классов по сравнению с бейзлайном. 
+ -1 Подросло значение per_class_lwlrap для многих классов по сравнению с бейзлайном. 
 
 
 <img src="./img/per_class_lwlrap_mixup.png" alt="drawing" width="500"/>
@@ -59,7 +59,7 @@
 79: Zipper_(clothing)
 
 
-2. Разобъем per_class_lwlrap отдельно по типу данных: 
+ -2 Разобъем per_class_lwlrap отдельно по типу данных: 
 
 <img src="./img/per_class_lwlrap_mixup_div.png" alt="drawing" width="500"/>
 
