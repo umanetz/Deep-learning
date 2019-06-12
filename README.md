@@ -96,11 +96,11 @@ Zipper_(clothing)
 Видно, что резко уменьшается значение Sigmoid и это влияет на градиенты. 
 В последнем слое мы нормировали на значения SoftMax, т.к. у нас multy-label классификация. Насамом деле, записей, относящихся к разным классам, около 5тыс. Мы можем пренебречь этим и нормировать на Sigmoid. В данном случае градиенты не обнуляются. 
 
-<img src="./img/Rnn_grad_good.png" alt="drawing" width="500"/>
+<img src="./img/Rnn_grad_good.png" alt="drawing" width="600"/>
 
 Ниже представлены результаты для первых 3х эпох:
 
-<img src="./img/lrap_rnn.png" alt="drawing" width="250"/> <img src="./img/loss_rnn.png" alt="drawing" width="250"/>
+<img src="./img/lrap_rnn.png" alt="drawing" width="350"/> <img src="./img/loss_rnn.png" alt="drawing" width="350"/>
 
 
 
