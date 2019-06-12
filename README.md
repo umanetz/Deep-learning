@@ -98,6 +98,10 @@ Zipper_(clothing)
 
 <img src="./img/Rnn_grad_good.png" alt="drawing" width="500"/>
 
+Ниже представлены результаты для первых 3х эпох:
+
+<img src="./img/lrap_rnn.png" alt="drawing" width="250"/> <img src="./img/loss_rnn.png" alt="drawing" width="250"/>
+
 
 
 
