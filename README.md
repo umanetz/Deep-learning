@@ -32,7 +32,7 @@
 
 <img src="./img/mixup_vs_base.png" alt="drawing" width="500"/>
 
-- Применение SWA, начиная с 30 эпохи, не улучшает рузультат
+#### Применение SWA, начиная с 30 эпохи, не улучшает рузультат
 
 <img src="./img/mixup_vs_SWA.png" alt="drawing" width="500"/>
 
